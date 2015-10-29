@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CalendarView</string>
+    <string name="newEvent">新增</string>
+    <string name="edit">修改</string>
+    <string name="delete">刪除</string>
+
+</resources>
