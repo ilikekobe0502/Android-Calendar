@@ -13,9 +13,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.SweepGradient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,7 +38,7 @@ import android.provider.CalendarContract.Events;
 public class CalendarView extends Activity {
 	private static final String DEBUG_TAG = "CalendarView";
 
-	private Button mButton_newEvent, mButton_edit, mButton_delete;
+	private Button mButton_newEvent, mButton_edit, mButton_delete, mButton_huanuage;
 
 	public GregorianCalendar month, itemmonth;// calendar instances.
 
@@ -70,6 +68,8 @@ public class CalendarView extends Activity {
 		mButton_edit.setText(R.string.edit);
 		mButton_delete = (Button)findViewById(R.id.button_delete);
 		mButton_delete.setText(R.string.delete);
+		mButton_huanuage = (Button)findViewById(R.id.button_huanuage);
+		mButton_huanuage.setText(R.string.huanuage);
 
 		rLayout = (LinearLayout) findViewById(R.id.text);
 		month = (GregorianCalendar) GregorianCalendar.getInstance();
@@ -144,13 +144,6 @@ public class CalendarView extends Activity {
 		mButton_delete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
-//				Cursor cursor = getApplication().getContentResolver()
-//						.query(Uri.parse("content://com.android.calendar/events"),
-//								new String[]{"calendar_id", "title", "description",
-//										"dtstart", "dtend", "eventLocation"}, null,
-//								null, null);
-//				cursor.moveToFirst();
 
 				//substitue your calendar id into the 0
 				Uri deleteUri = ContentUris.withAppendedId(Events.CONTENT_URI, Event_ID);
@@ -236,48 +229,49 @@ public class CalendarView extends Activity {
 		switch (type) {
 			case 0://新增
 
-			values.put(Events.DTSTART, startMillis);
-			values.put(Events.DTEND, endMillis);
-			values.put(Events.TITLE, mTitle);
-			values.put(Events.DESCRIPTION, mDiscriber);
-			values.put(Events.CALENDAR_ID, calID);
-			values.put(Events.EVENT_TIMEZONE, "Taiwan/Taipei");
-			values.put(Events.EVENT_LOCATION, mLocation);
-//		uri = cr.insert(Events.CONTENT_URI, values);
-			AsyncQueryHandler handler = new MyHandler(getContentResolver());
-			handler.startInsert(0, null, Events.CONTENT_URI, values);
+				values.put(Events.DTSTART, startMillis);
+				values.put(Events.DTEND, endMillis);
+				values.put(Events.TITLE, mTitle);
+				values.put(Events.DESCRIPTION, mDiscriber);
+				values.put(Events.CALENDAR_ID, calID);
+				values.put(Events.EVENT_TIMEZONE, "Taiwan/Taipei");
+				values.put(Events.EVENT_LOCATION, mLocation);
+	//		uri = cr.insert(Events.CONTENT_URI, values);
+				AsyncQueryHandler handler = new MyHandler(getContentResolver());
+				handler.startInsert(0, null, Events.CONTENT_URI, values);
 
-			Log.i(DEBUG_TAG, "新增: " + mTitle);
+				Log.i(DEBUG_TAG, "新增: " + mTitle);
 
-			refreshCalendar();
+				refreshCalendar();
 
-			/**
-			 * 意圖新增event
-			 */
-//				Calendar beginTime = Calendar.getInstance();
-//				beginTime.set(2012, 0, 19, 7, 30);
-//				Calendar endTime = Calendar.getInstance();
-//				endTime.set(2012, 0, 19, 8, 30);
-//				Intent intent = new Intent(Intent.ACTION_INSERT)
-//						.setData(Events.CONTENT_URI)
-//						.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
-//						.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
-//						.putExtra(Events.TITLE, "Yoga")
-//						.putExtra(Events.DESCRIPTION, "Group class")
-//						.putExtra(Events.EVENT_LOCATION, "The gym")
-//						.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
-//						.putExtra(Intent.EXTRA_EMAIL, "rowan@example.com,trevor@example.com");
-//				startActivity(intent);
+				/**
+				 * 意圖新增event
+				 */
+	//				Calendar beginTime = Calendar.getInstance();
+	//				beginTime.set(2012, 0, 19, 7, 30);
+	//				Calendar endTime = Calendar.getInstance();
+	//				endTime.set(2012, 0, 19, 8, 30);
+	//				Intent intent = new Intent(Intent.ACTION_INSERT)
+	//						.setData(Events.CONTENT_URI)
+	//						.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
+	//						.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
+	//						.putExtra(Events.TITLE, "Yoga")
+	//						.putExtra(Events.DESCRIPTION, "Group class")
+	//						.putExtra(Events.EVENT_LOCATION, "The gym")
+	//						.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
+	//						.putExtra(Intent.EXTRA_EMAIL, "rowan@example.com,trevor@example.com");
+	//				startActivity(intent);
 				break;
 			case 1://修改
 				Uri updateUri = null;
 				// The new title for the event
-				values.put(Events.TITLE, mTitle);
-				updateUri = ContentUris.withAppendedId(Events.CONTENT_URI, Event_ID);
-				getContentResolver().update(updateUri, values, null, null);
-				Log.i(DEBUG_TAG, "修改: " + values);
-
-				refreshCalendar();
+				if(!mTitle.toString().equals("")) {
+					values.put(Events.TITLE, mTitle);
+					updateUri = ContentUris.withAppendedId(Events.CONTENT_URI, Event_ID);
+					getContentResolver().update(updateUri, values, null, null);
+					Log.i(DEBUG_TAG, "修改: " + values);
+					refreshCalendar();
+				}
 				break;
 		}
 	}
@@ -365,6 +359,9 @@ public class CalendarView extends Activity {
 
 	}
 
+	/**
+	 * 更新行事曆
+	 */
 	public void refreshCalendar() {
 		TextView title = (TextView) findViewById(R.id.title);
 
