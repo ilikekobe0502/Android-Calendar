@@ -6,5 +6,8 @@
     <string name="edit">修改</string>
     <string name="delete">刪除</string>
     <string name="calendars">行事曆表</string>
+    <string name="newCalendars">新增行事曆表</string>
+    <string name="deleteCalendars">刪除行事曆表</string>
+    <string name="editCalendars">修改行事曆表</string>
 
 </resources>
