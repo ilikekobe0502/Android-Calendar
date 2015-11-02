@@ -74,9 +74,53 @@ URI:content://com.android.calendar/events來做對於每一筆事件的處理
 
 若是再深層一點的處理，例如要新增自己的Owner
 URI:content://com.android.calendar/calendars則是做對於每一種類的資料表做處理  
+新增:必須搭配Sync Adapters來做同步的動作
+```
+	/**
+	 * Sync Adapters 搭配創建一個新的Calendars資料表
+	 * @return
+	 */
+	private static Uri buildCalUri() {
+		return CAL_URI
+				.buildUpon()
+				.appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+				.appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, "Neo_Hu@huanuage.com")
+				.appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE,CalendarContract.ACCOUNT_TYPE_LOCAL)
+				.build();
+	}
+```
+然後放上新的Calendars的資料
+```
+/**
+	 * 新的Calendars的基本資料
+	 * @return
+	 */
+	private static ContentValues buildNewCalContentValues() {
+		final ContentValues cv = new ContentValues();
+		cv.put(CalendarContract.Calendars.ACCOUNT_NAME, "Neo_Hu@huanuage.com");
+		cv.put(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL);
+		cv.put(CalendarContract.Calendars.NAME, "Huanauge");
+		cv.put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, "Huanuage行事曆");
+		cv.put(CalendarContract.Calendars.CALENDAR_COLOR, 0xEA8561);
+		cv.put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_EDITOR);
+//		cv.put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_READ);//使用者無法編輯
+		cv.put(CalendarContract.Calendars.OWNER_ACCOUNT, "Neo_Hu@huanuage.com");
+		cv.put(CalendarContract.Calendars.VISIBLE, 1);//是否顯示
+		cv.put(CalendarContract.Calendars.SYNC_EVENTS, 1);//是否要再裝置上同步
+		return cv;
+	}
+```
+最後放上執行的code即可
+```
+ContentResolver cr = getContentResolver();
+final ContentValues cv = buildNewCalContentValues();
+Uri calUri = buildCalUri();
+//insert the calendar into the database
+cr.insert(calUri, cv);
+```
 刪除:
 ```
-	//刪除Calendars資料表內 ID = 6 的資料
+	//刪除Calendars資料表事件所屬種類ID = 6 的資料
 	/*
 	Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, 6);
 	getApplication().getContentResolver().delete(deleteUri, null, null);
@@ -88,7 +132,7 @@ URI:content://com.android.calendar/calendars則是做對於每一種類的資料
 /*
 ContentValues values = new ContentValues();
 Uri updateUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, 6);
-values.put(CalendarContract.Calendars._ID , 4 );//將ID = 6的資料改成4
+values.put(CalendarContract.Calendars._ID , 4 );//將事件所屬種類ID = 6的資料改成4
 getContentResolver().update(updateUri, values, null, null);
 cursor.moveToNext();
 */
