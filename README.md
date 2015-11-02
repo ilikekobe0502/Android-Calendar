@@ -137,3 +137,9 @@ getContentResolver().update(updateUri, values, null, null);
 cursor.moveToNext();
 */
 ```
+
+基本的操作大概就這樣，可以下載DEMO試試看
+http://archive1.derekbekoe.com/blog/item/16-using-the-android-4-0-calendar-api.html
+這一篇也寫得滿詳細的，大家也可以參考看看。
+有問題也歡迎來信hu.yu.huei@gmail.com
+
