@@ -4,14 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.CalendarContract;
 import android.util.Log;
 
 public class Utility {
+	/**
+	 * Calender Event Use
+	 */
 	public static ArrayList<String> calendar_id = new ArrayList<String>();//行事曆ID(種類)
 	public static ArrayList<String> nameOfEvent = new ArrayList<String>();//事件名稱
 	public static ArrayList<String> startDates = new ArrayList<String>();//開始時間
@@ -28,7 +29,49 @@ public class Utility {
 	public static String f = null;
 	public static int g = 0;
 
+	/**
+	 * Calendars Use
+	 */
+	public static ArrayList<String> accunt_name = new ArrayList<String>();
+	public static ArrayList<String> calendar_displayname = new ArrayList<String>();
+	public static ArrayList<String> id = new ArrayList<String>();
 
+	/**
+	 * 讀取Calendars
+	 * @param context
+	 * @return
+	 */
+	public static ArrayList<String> readCalendars(Context context){
+
+		Cursor cursor = context.getContentResolver()
+				.query(Uri.parse("content://com.android.calendar/calendars"),//指向Calendars的資料表
+						new String[] { "account_name","calendar_displayName","_id"}, null,//設定好要取出的欄位
+						null, null);
+		cursor.moveToFirst();
+
+		String CNames[] = new String[cursor.getCount()];
+		accunt_name.clear();
+		calendar_displayname.clear();
+		id.clear();
+
+		for (int i = 0; i < CNames.length; i++) {
+			accunt_name.add(cursor.getString(0));
+			calendar_displayname.add(cursor.getString(1));
+			id.add(cursor.getString(2));
+			cursor.moveToNext();
+		}
+		Log.i("帳號 = ", "---" + accunt_name);
+		Log.i("名稱 = ", "---" + calendar_displayname);
+		Log.i("id = ", "---" + id);
+
+		return accunt_name;
+	}
+
+	/**
+	 * 讀取Calendar Event
+	 * @param context
+	 * @return
+	 */
 	public static ArrayList<String> readCalendarEvent(Context context) {
 		Cursor cursor = context.getContentResolver()
 				.query(Uri.parse("content://com.android.calendar/events"),

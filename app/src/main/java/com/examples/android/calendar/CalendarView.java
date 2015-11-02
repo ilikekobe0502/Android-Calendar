@@ -17,7 +17,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,8 +51,8 @@ public class CalendarView extends Activity {
 	ArrayList<String> date;
 	ArrayList<String> desc;
 	Uri uri;
-	private long Event_ID = 0;
-	private long calID = 6;
+	private long Event_ID = 0;//事件ID
+	private long calID = 7;//事件所屬種類ID
 	private long startMillis = 0;
 	private long endMillis = 0;
 
@@ -68,8 +67,8 @@ public class CalendarView extends Activity {
 		mButton_edit.setText(R.string.edit);
 		mButton_delete = (Button)findViewById(R.id.button_delete);
 		mButton_delete.setText(R.string.delete);
-		mButton_huanuage = (Button)findViewById(R.id.button_huanuage);
-		mButton_huanuage.setText(R.string.huanuage);
+		mButton_huanuage = (Button)findViewById(R.id.button_calendars);
+		mButton_huanuage.setText(R.string.calendars);
 
 		rLayout = (LinearLayout) findViewById(R.id.text);
 		month = (GregorianCalendar) GregorianCalendar.getInstance();
@@ -155,6 +154,31 @@ public class CalendarView extends Activity {
 		});
 
 		/**
+		 * 對Calendars做處理
+		 */
+
+		mButton_huanuage.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				Utility.readCalendars(CalendarView.this);
+				//刪除Calendars資料表內 ID = 6 的資料
+				/*
+				Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, 6);
+				getApplication().getContentResolver().delete(deleteUri, null, null);
+				*/
+
+				//將Calendars資料表內 ID = 6 的資料改成4
+				/*
+				ContentValues values = new ContentValues();
+				Uri updateUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, 10);
+				values.put(CalendarContract.Calendars._ID , 4 );//將ID = 6的資料改成4
+				getContentResolver().update(updateUri, values, null, null);
+				*/
+			}
+		});
+
+		/**
 		 *點選日曆中的某一天
 		 */
 		gridview.setOnItemClickListener(new OnItemClickListener() {
@@ -236,7 +260,6 @@ public class CalendarView extends Activity {
 				values.put(Events.CALENDAR_ID, calID);
 				values.put(Events.EVENT_TIMEZONE, "Taiwan/Taipei");
 				values.put(Events.EVENT_LOCATION, mLocation);
-	//		uri = cr.insert(Events.CONTENT_URI, values);
 				AsyncQueryHandler handler = new MyHandler(getContentResolver());
 				handler.startInsert(0, null, Events.CONTENT_URI, values);
 
@@ -383,9 +406,6 @@ public class CalendarView extends Activity {
 		}
 	}
 
-	/**
-	 * 	AsyncQueryHandler Runnable
-	 */
 	public Runnable calendarUpdater = new Runnable() {
 
 		@Override

@@ -5,5 +5,6 @@
     <string name="newEvent">新增</string>
     <string name="edit">修改</string>
     <string name="delete">刪除</string>
+    <string name="calendars">行事曆表</string>
 
 </resources>
